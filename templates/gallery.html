@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Gallery — Abinash Catering{% endblock %}
+{% block meta_description %}See Abinash Catering in action — photos from weddings, corporate events, buffet setups and traditional South Indian meals.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Moments We've Served</span>
+    <h1>Our Gallery</h1>
+    <p>A glimpse of the food and events we've had the pleasure of catering.</p>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container">
+    <div class="filter-bar" id="galleryFilterBar" role="tablist" aria-label="Filter gallery by category">
+      <button class="filter-chip active" data-category="all" role="tab" aria-selected="true">All</button>
+      {% for cat in categories %}
+      <button class="filter-chip" data-category="{{ cat }}" role="tab" aria-selected="false">{{ cat }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+      {% for item in gallery_items %}
+      <button type="button" class="gallery-item" data-category="{{ item.category }}"
+              data-full="{{ item.image_url }}" data-title="{{ item.title }}" data-desc="{{ item.description }}">
+        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
+        <span class="gallery-overlay">
+          <span class="gallery-title">{{ item.title }}</span>
+          <span class="gallery-cat">{{ item.category }}</span>
+        </span>
+      </button>
+      {% else %}
+      <p class="empty-state">Gallery photos will be added soon.</p>
+      {% endfor %}
+    </div>
+    <p class="empty-state" id="galleryEmptyState" hidden>No photos found in this category yet.</p>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+  <div class="lightbox-content">
+    <img id="lightboxImage" src="" alt="">
+    <div class="lightbox-caption">
+      <p id="lightboxTitle"></p>
+      <p id="lightboxDesc" class="lightbox-desc"></p>
+    </div>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+</div>
+{% endblock %}

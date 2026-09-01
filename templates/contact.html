@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — Abinash Catering{% endblock %}
+{% block meta_description %}Get in touch with Abinash Catering for wedding, corporate and event catering enquiries in Chennai. Call, WhatsApp or send us a message.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">We'd Love To Hear From You</span>
+    <h1>Contact Abinash Catering</h1>
+    <p>Reach out for enquiries, custom menus or general questions.</p>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container contact-grid">
+    <div class="contact-info-card">
+      <h2>Get In Touch</h2>
+      <ul class="contact-info-list">
+        <li>
+          <span class="contact-label">Phone</span>
+          <span class="contact-value">{{ business.phone }}</span>
+        </li>
+        <li>
+          <span class="contact-label">WhatsApp</span>
+          <span class="contact-value">{{ business.whatsapp }}</span>
+        </li>
+        <li>
+          <span class="contact-label">Email</span>
+          <span class="contact-value">{{ business.email }}</span>
+        </li>
+        <li>
+          <span class="contact-label">Address</span>
+          <span class="contact-value">{{ business.address }}</span>
+        </li>
+        <li>
+          <span class="contact-label">Business Hours</span>
+          <span class="contact-value">{{ business.hours }}</span>
+        </li>
+      </ul>
+      <div class="contact-actions">
+        <a href="{{ business.phone_link }}" class="btn btn-primary">Call Now</a>
+        <a href="{{ business.whatsapp_link }}" class="btn btn-outline" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://maps.google.com/?q={{ business.address }}" class="btn btn-outline" target="_blank" rel="noopener">Get Directions</a>
+      </div>
+
+      <div class="map-placeholder">
+       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3694.427919610927!2d80.27124437484285!3d13.052176187270684!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a526626e05019d7%3A0x3556878ade09817a!2sAbinash%20Catering!5e1!3m2!1sen!2sin!4v1787050214983!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>      </div>
+      </div>
+
+    <div class="contact-form-card">
+      <h2>Send Us a Message</h2>
+      <form id="contactForm" class="app-form" novalidate>
+        <div class="form-row">
+          <label for="c_name">Name<span class="req">*</span></label>
+          <input type="text" id="c_name" name="name" required>
+          <span class="field-error" data-error-for="name"></span>
+        </div>
+        <div class="form-row">
+          <label for="c_phone">Phone</label>
+          <input type="tel" id="c_phone" name="phone">
+          <span class="field-error" data-error-for="phone"></span>
+        </div>
+        <div class="form-row">
+          <label for="c_email">Email</label>
+          <input type="email" id="c_email" name="email">
+          <span class="field-error" data-error-for="email"></span>
+        </div>
+        <div class="form-row">
+          <label for="c_message">Message<span class="req">*</span></label>
+          <textarea id="c_message" name="message" rows="5" required></textarea>
+          <span class="field-error" data-error-for="message"></span>
+        </div>
+        <span class="field-error" data-error-for="contact"></span>
+        <button type="submit" class="btn btn-primary btn-block" id="contactSubmitBtn">
+          <span class="btn-text">Send Message</span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+        <p class="form-success" id="contactSuccess" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.AbinashApp && AbinashApp.bindContactForm) {
+    AbinashApp.bindContactForm();
+  }
+});
+</script>
+{% endblock %}
