@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% block title %}Our Menu — Abinash Catering{% endblock %}
+{% block meta_description %}Browse the complete Abinash Catering menu: breakfast, lunch and dinner menu sets, South Indian specials, biryani, sweets and add-on services for weddings and events.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">From Our Kitchen</span>
+    <h1>Our Menu</h1>
+    <p>A taste of tradition across every course.</p>
+    <p class="menu-count-badge">{{ menu_count }}+ Delicious Choices</p>
+  </div>
+</section>
+
+<section class="section reveal">
+  <div class="container">
+
+    <!-- ==================================================
+         CATERING MENU BUILDER WIZARD
+         Choose meal -> choose combo -> keep/customize -> your
+         details -> summary -> submit enquiry.
+         ================================================== -->
+    <div id="cateringWizard" class="catering-wizard" data-meal-types='{{ meal_types | tojson }}'>
+
+      <ol class="wizard-progress" id="wizardProgress">
+        <li data-step="meal" class="active">1. Meal</li>
+        <li data-step="combo">2. Menu</li>
+        <li data-step="detail">3. Review</li>
+        <li data-step="form">4. Details</li>
+        <li data-step="summary">5. Summary</li>
+      </ol>
+
+      <!-- STEP 1: MEAL TYPE -->
+      <div class="wizard-panel active" data-panel="meal">
+        <h2 class="wizard-heading">What are you catering for?</h2>
+        <p class="wizard-sub">Pick a meal to see the complete catering combinations available for it.</p>
+        <div class="meal-type-grid" id="mealTypeGrid">
+          {% for m in meal_types %}
+          <button type="button" class="meal-type-card" data-meal="{{ m }}">
+            <span class="meal-type-name">{{ m }}</span>
+            <span class="meal-type-cta">View Menus &rarr;</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- STEP 2: COMBO SELECTION -->
+      <div class="wizard-panel" data-panel="combo">
+        <button type="button" class="wizard-back" data-back-to="meal">&larr; Change Meal</button>
+        <h2 class="wizard-heading" id="comboHeading">Available Menus</h2>
+        <p class="wizard-sub">Each option below is a complete catering combination. Choose one to see everything included.</p>
+        <div class="combo-grid" id="comboGrid"></div>
+        <p class="empty-state" id="comboEmptyState" hidden>No catering menus are available for this meal right now. Please contact us for a custom quote.</p>
+        <p class="loading-state" id="comboLoadingState">Loading menus&hellip;</p>
+      </div>
+
+      <!-- STEP 3: REVIEW / KEEP / CUSTOMIZE -->
+      <div class="wizard-panel" data-panel="detail">
+        <button type="button" class="wizard-back" data-back-to="combo">&larr; Choose a Different Menu</button>
+        <h2 class="wizard-heading" id="detailHeading">Menu</h2>
+        <p class="wizard-sub" id="detailSub">Everything included in this catering combination:</p>
+
+        <ul class="item-checklist" id="detailItemList"></ul>
+
+        <div class="wizard-actions" id="detailActions">
+          <button type="button" class="btn btn-primary" id="keepMenuBtn">Keep This Menu</button>
+          <button type="button" class="btn btn-outline" id="customizeMenuBtn">Customize This Menu</button>
+        </div>
+
+        <!-- CUSTOMIZE SUB-STEP: shown in place once "Customize" is clicked -->
+        <div class="customize-panel" id="customizePanel" hidden>
+          <p class="wizard-sub">Uncheck any item above to remove it. Then add other dishes from our full food list below.</p>
+
+          <div class="add-dish-search">
+            <input type="search" id="addDishSearch" placeholder="Search dishes to add&hellip;" aria-label="Search dishes to add">
+          </div>
+          <div class="add-dish-list" id="addDishList"></div>
+
+          <div class="added-dishes" id="addedDishesWrap" hidden>
+            <h4>Added Dishes</h4>
+            <div class="added-dishes-chips" id="addedDishesChips"></div>
+          </div>
+
+          <div class="wizard-actions">
+            <button type="button" class="btn btn-primary" id="customizeContinueBtn">Continue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: CUSTOMER DETAILS -->
+      <div class="wizard-panel" data-panel="form">
+        <button type="button" class="wizard-back" data-back-to="detail">&larr; Back to Menu</button>
+        <h2 class="wizard-heading">Your Details</h2>
+        <p class="wizard-sub">Tell us about your event so we can confirm this catering enquiry.</p>
+
+        <form id="cateringDetailsForm" class="app-form" novalidate>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cw_name">Full Name<span class="req">*</span></label>
+              <input type="text" id="cw_name" name="name" required>
+              <span class="field-error" data-error-for="name"></span>
+            </div>
+            <div class="form-row">
+              <label for="cw_phone">Phone Number<span class="req">*</span></label>
+              <input type="tel" id="cw_phone" name="phone" required>
+              <span class="field-error" data-error-for="phone"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cw_email">Email</label>
+              <input type="email" id="cw_email" name="email">
+              <span class="field-error" data-error-for="email"></span>
+            </div>
+            <div class="form-row">
+              <label for="cw_event_type">Event Type<span class="req">*</span></label>
+              <select id="cw_event_type" name="event_type" required>
+                <option value="">Select event type</option>
+                {% for et in event_types %}
+                <option value="{{ et }}">{{ et }}</option>
+                {% endfor %}
+              </select>
+              <span class="field-error" data-error-for="event_type"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cw_event_date">Event Date<span class="req">*</span></label>
+              <input type="date" id="cw_event_date" name="event_date" required>
+              <span class="field-error" data-error-for="event_date"></span>
+            </div>
+            <div class="form-row">
+              <label for="cw_event_time">Event Time</label>
+              <input type="time" id="cw_event_time" name="event_time">
+              <span class="field-error" data-error-for="event_time"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cw_guest_count">Number of Guests<span class="req">*</span></label>
+              <input type="number" id="cw_guest_count" name="guest_count" min="1" placeholder="e.g. 250" required>
+              <span class="field-error" data-error-for="guest_count"></span>
+            </div>
+            <div class="form-row">
+              <label for="cw_location">Event Location<span class="req">*</span></label>
+              <input type="text" id="cw_location" name="location" placeholder="Venue / area / city" required>
+              <span class="field-error" data-error-for="location"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="cw_food_preference">Food Preference</label>
+              <select id="cw_food_preference" name="food_preference">
+                <option value="">Select preference</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Both">Both Veg &amp; Non-Veg</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="cw_additional">Additional Requirements</label>
+              <input type="text" id="cw_additional" name="additional_requirements" placeholder="Anything else we should know?">
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button type="button" class="btn btn-primary" id="detailsContinueBtn">Continue to Summary</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 5: SUMMARY + SUBMIT -->
+      <div class="wizard-panel" data-panel="summary">
+        <button type="button" class="wizard-back" data-back-to="form">&larr; Edit Details</button>
+        <h2 class="wizard-heading">Catering Booking Summary</h2>
+
+        <div class="summary-card" id="summaryCard"></div>
+
+        <button type="button" class="btn btn-primary btn-block" id="submitEnquiryBtn">
+          <span class="btn-text">Submit Catering Enquiry</span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+        <p class="form-success" id="cateringSuccess" hidden></p>
+      </div>
+
+    </div>
+
+    <hr class="wizard-divider">
+
+    <details class="full-menu-details">
+      <summary>Browse our full à la carte menu &amp; add-on services</summary>
+
+    <div class="menu-search-bar">
+      <input type="search" id="menuSearch" placeholder="Search dishes..." aria-label="Search dishes">
+    </div>
+
+    <div class="filter-bar" id="menuCategoryFilterBar" role="tablist" aria-label="Filter menu by category">
+      <button class="filter-chip active" data-category="all" role="tab" aria-selected="true">All</button>
+      {% for cat in categories %}
+      <button class="filter-chip" data-category="{{ cat }}" role="tab" aria-selected="false">{{ cat }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="filter-bar filter-bar-sections" id="menuSectionFilterBar" role="tablist" aria-label="Filter menu by menu-card section">
+      <button class="filter-chip active" data-section="all" role="tab" aria-selected="true">All Sections</button>
+      {% for sec in menu_sections %}
+      <button class="filter-chip" data-section="{{ sec }}" role="tab" aria-selected="false">{{ sec }}</button>
+      {% endfor %}
+    </div>
+
+    <div id="menuSections">
+      {% set ns = namespace(current_section="") %}
+      {% for item in menu_items %}
+        {% if item.menu_section != ns.current_section %}
+          {% if not loop.first %}</div></div>{% endif %}
+          {% set ns.current_section = item.menu_section %}
+          <div class="menu-section-block" data-section="{{ item.menu_section }}">
+            <h2 class="menu-section-title">{{ item.menu_section }}</h2>
+            <div class="menu-grid menu-grid-full">
+        {% endif %}
+          <div class="menu-card"
+               data-category="{{ item.category }}"
+               data-section="{{ item.menu_section }}"
+               data-search="{{ (item.name_tamil ~ ' ' ~ item.name ~ ' ' ~ item.category ~ ' ' ~ item.menu_section) | lower }}">
+            <div class="menu-card-img" style="background-image:url('{{ item.image_url }}')"></div>
+            <div class="menu-card-body">
+              <span class="menu-tag">{{ item.category }}</span>
+              <h3 class="menu-card-tamil">{{ item.name_tamil }}</h3>
+              {% if item.name %}<p class="menu-card-english">{{ item.name }}</p>{% endif %}
+              {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+            </div>
+          </div>
+        {% if loop.last %}</div></div>{% endif %}
+      {% else %}
+      <p class="empty-state">Menu items will be added soon. Please check back or contact us for a custom menu.</p>
+      {% endfor %}
+    </div>
+    <p class="empty-state" id="menuEmptyState" hidden>No dishes match your search or filters.</p>
+    </details>
+  </div>
+</section>
+
+<section class="cta-banner reveal">
+  <div class="container cta-banner-inner">
+    <h2>Want a menu built just for you?</h2>
+    <p>We can mix and match dishes across categories for your specific event.</p>
+    <a href="{{ url_for('booking') }}" class="btn btn-primary">Request a Custom Menu</a>
+  </div>
+</section>
+{% endblock %}

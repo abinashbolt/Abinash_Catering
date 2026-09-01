@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Abinash Catering{% endblock %}
+{% block body_class %}page-admin{% endblock %}
+
+{% block content %}
+<section class="admin-shell">
+  <div class="container">
+
+    <div class="admin-topbar">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p>Signed in as <strong>{{ session.get('admin_username') }}</strong>{% if demo_mode %} · <span class="demo-badge">DEMO MODE — connect Supabase in .env for persistent data</span>{% endif %}</p>
+      </div>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-outline btn-sm">Log Out</a>
+    </div>
+
+    <div class="admin-stats">
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.today_bookings }}</span><span class="stat-label">Today's Bookings</span></div>
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.upcoming_bookings }}</span><span class="stat-label">Upcoming</span></div>
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.pending_bookings }}</span><span class="stat-label">Pending</span></div>
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.confirmed_bookings }}</span><span class="stat-label">Confirmed</span></div>
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.completed_bookings }}</span><span class="stat-label">Completed</span></div>
+      <div class="admin-stat-card"><span class="stat-num">{{ stats.cancelled_bookings }}</span><span class="stat-label">Cancelled</span></div>
+    </div>
+
+    <nav class="admin-tabs" id="adminTabs">
+      <a href="#bookings" class="admin-tab active" data-tab="bookings">Bookings</a>
+      <a href="#messages" class="admin-tab" data-tab="messages">Contact Messages</a>
+      <a href="#menu" class="admin-tab" data-tab="menu">Menu</a>
+      <a href="#gallery" class="admin-tab" data-tab="gallery">Gallery</a>
+      <a href="#testimonials" class="admin-tab" data-tab="testimonials">Testimonials</a>
+    </nav>
+
+    <!-- BOOKINGS -->
+    <div class="admin-panel" id="bookings">
+      <h2>Booking Enquiries</h2>
+
+      {% if bookings %}
+      <div class="booking-controls">
+        <input type="search" id="bookingSearch" class="booking-search" placeholder="Search customer, phone or booking ID…">
+        <div class="booking-filter-group" id="statusFilterGroup" data-filter-type="status">
+          <button type="button" class="filter-pill active" data-value="all">All</button>
+          <button type="button" class="filter-pill" data-value="today">Today</button>
+          <button type="button" class="filter-pill" data-value="upcoming">Upcoming</button>
+          <button type="button" class="filter-pill" data-value="pending">Pending</button>
+          <button type="button" class="filter-pill" data-value="confirmed">Confirmed</button>
+          <button type="button" class="filter-pill" data-value="completed">Completed</button>
+          <button type="button" class="filter-pill" data-value="cancelled">Cancelled</button>
+        </div>
+        <div class="booking-filter-group" id="mealFilterGroup" data-filter-type="meal">
+          <button type="button" class="filter-pill active" data-value="all">All Meals</button>
+          <button type="button" class="filter-pill" data-value="Breakfast">Breakfast</button>
+          <button type="button" class="filter-pill" data-value="Lunch">Lunch</button>
+          <button type="button" class="filter-pill" data-value="Dinner">Dinner</button>
+        </div>
+        <input type="date" id="bookingDateFilter" class="booking-date-filter" aria-label="Filter by event date">
+        <button type="button" id="clearFiltersBtn" class="btn btn-outline btn-sm">Clear Filters</button>
+      </div>
+      <p class="empty-state" id="bookingNoResults" hidden>No bookings match your search/filters.</p>
+
+      <div class="table-scroll">
+        <table class="admin-table booking-table" id="bookingTable">
+          <thead>
+            <tr>
+              <th>Booking ID</th><th>Customer</th><th>Phone</th><th>Event</th><th>Date</th>
+              <th>Guests</th><th>Meal &amp; Menu</th><th>Status</th><th>Received</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr class="booking-row"
+                data-status="{{ b.status }}"
+                data-meal="{{ b.meal_type }}"
+                data-date="{{ b.event_date or '' }}"
+                data-search="{{ (b.name ~ ' ' ~ b.phone ~ ' ' ~ b.id)|lower }}"
+                data-booking='{{ b|tojson }}'>
+              <td data-label="Booking ID"><span class="booking-id">#{{ b.id[:8]|upper }}</span></td>
+              <td data-label="Customer">{{ b.name }}</td>
+              <td data-label="Phone">{{ b.phone }}</td>
+              <td data-label="Event">{{ b.event_type }}</td>
+              <td data-label="Date">{{ b.event_date or '—' }}{% if b.event_time %} · {{ b.event_time }}{% endif %}</td>
+              <td data-label="Guests">{{ b.guest_count or '—' }}</td>
+              <td data-label="Meal &amp; Menu">
+                {% if b.selected_menu %}
+                  {{ b.meal_type }} — {{ b.selected_menu }}
+                  {% if b.menu_type == 'customized' %}<span class="menu-tag">Customized</span>{% endif %}
+                {% else %}—{% endif %}
+              </td>
+              <td data-label="Status">
+                <form method="POST" action="{{ url_for('admin_update_booking_status', booking_id=b.id) }}" class="inline-form">
+                  <select name="status" class="status-select status-{{ b.status }}" onchange="this.form.submit()">
+                    {% for s in statuses %}
+                    <option value="{{ s }}" {{ 'selected' if b.status == s }}>{{ s|capitalize }}</option>
+                    {% endfor %}
+                  </select>
+                </form>
+              </td>
+              <td data-label="Received">{{ b.created_at[:16] if b.created_at else '—' }}</td>
+              <td data-label="Action"><button type="button" class="btn btn-outline btn-sm view-booking-btn">View</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="empty-state">No booking enquiries yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- BOOKING DETAIL MODAL -->
+    <div class="booking-modal" id="bookingModal" hidden>
+      <div class="booking-modal-backdrop" id="bookingModalBackdrop"></div>
+      <div class="booking-modal-card" id="bookingModalCard">
+        <button type="button" class="booking-modal-close" id="bookingModalClose" aria-label="Close">&times;</button>
+        <div id="bookingModalPrintArea"></div>
+        <div class="booking-modal-actions no-print">
+          <a href="#" id="bookingWhatsAppBtn" class="btn btn-primary btn-sm" target="_blank" rel="noopener">WhatsApp Customer</a>
+          <button type="button" id="bookingPrintBtn" class="btn btn-outline btn-sm">Print</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT MESSAGES -->
+    <div class="admin-panel" id="messages">
+      <h2>Contact Messages</h2>
+      {% if messages %}
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Message</th><th>Received</th></tr></thead>
+          <tbody>
+            {% for m in messages %}
+            <tr>
+              <td>{{ m.name }}</td>
+              <td>{{ m.phone or '—' }}</td>
+              <td>{{ m.email or '—' }}</td>
+              <td class="msg-cell">{{ m.message }}</td>
+              <td>{{ m.created_at[:16] if m.created_at else '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="empty-state">No contact messages yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- MENU MANAGEMENT -->
+    <div class="admin-panel" id="menu">
+      <h2>Menu Management</h2>
+
+      <details class="admin-add-form">
+        <summary>+ Add Menu Item</summary>
+        <form method="POST" action="{{ url_for('admin_add_menu_item') }}" class="app-form admin-inline-form">
+          <div class="form-grid-2">
+            <div class="form-row"><label>Tamil Name</label><input type="text" name="name_tamil" required placeholder="இட்லி"></div>
+            <div class="form-row"><label>English Name (optional)</label><input type="text" name="name" placeholder="Idli"></div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Category</label>
+              <select name="category" required>
+                {% for c in menu_categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="form-row"><label>Menu Section</label><input type="text" name="menu_section" required placeholder="காலை டிபன் - 1"></div>
+          </div>
+          <div class="form-row"><label>Description (optional)</label><textarea name="description" rows="2"></textarea></div>
+          <div class="form-grid-2">
+            <div class="form-row"><label>Image URL</label><input type="text" name="image_url" placeholder="/static/images/food/example.jpg"></div>
+            <div class="form-row"><label>Display Order</label><input type="number" name="display_order" min="0" value="0"></div>
+          </div>
+          <label class="checkbox-row"><input type="checkbox" name="is_available" checked> Available</label>
+          <button type="submit" class="btn btn-primary btn-sm">Add Item</button>
+        </form>
+      </details>
+
+      <div class="admin-card-grid">
+        {% for item in menu_items %}
+        <div class="admin-item-card">
+          <div class="admin-item-img" style="background-image:url('{{ item.image_url }}')"></div>
+          <div class="admin-item-body">
+            <span class="menu-tag">{{ item.category }}</span>
+            <span class="menu-tag">{{ item.menu_section }}</span>
+            <h4>{{ item.name_tamil }}</h4>
+            {% if item.name %}<p class="menu-card-english">{{ item.name }}</p>{% endif %}
+            <p>{{ item.description }}</p>
+            <span class="avail-badge {{ 'yes' if item.is_available else 'no' }}">{{ 'Available' if item.is_available else 'Hidden' }}</span>
+            <details class="admin-edit-form">
+              <summary>Edit</summary>
+              <form method="POST" action="{{ url_for('admin_edit_menu_item', item_id=item.id) }}" class="app-form">
+                <div class="form-row"><label>Tamil Name</label><input type="text" name="name_tamil" value="{{ item.name_tamil }}" required></div>
+                <div class="form-row"><label>English Name (optional)</label><input type="text" name="name" value="{{ item.name }}"></div>
+                <div class="form-row">
+                  <label>Category</label>
+                  <select name="category">
+                    {% for c in menu_categories %}<option value="{{ c }}" {{ 'selected' if c == item.category }}>{{ c }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="form-row"><label>Menu Section</label><input type="text" name="menu_section" value="{{ item.menu_section }}" required></div>
+                <div class="form-row"><label>Description</label><textarea name="description" rows="2">{{ item.description }}</textarea></div>
+                <div class="form-row"><label>Image URL</label><input type="text" name="image_url" value="{{ item.image_url }}"></div>
+                <div class="form-row"><label>Display Order</label><input type="number" name="display_order" min="0" value="{{ item.display_order }}"></div>
+                <label class="checkbox-row"><input type="checkbox" name="is_available" {{ 'checked' if item.is_available }}> Available</label>
+                <button type="submit" class="btn btn-outline btn-sm">Save Changes</button>
+              </form>
+            </details>
+            <form method="POST" action="{{ url_for('admin_delete_menu_item', item_id=item.id) }}" class="inline-form" onsubmit="return confirm('Delete this menu item?');">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <p class="empty-state">No menu items yet — add your first one above.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- GALLERY MANAGEMENT -->
+    <div class="admin-panel" id="gallery">
+      <h2>Gallery Management</h2>
+
+      <details class="admin-add-form">
+        <summary>+ Add Gallery Image</summary>
+        <form method="POST" action="{{ url_for('admin_add_gallery_item') }}" class="app-form admin-inline-form">
+          <div class="form-grid-2">
+            <div class="form-row"><label>Title</label><input type="text" name="title" required></div>
+            <div class="form-row">
+              <label>Category</label>
+              <select name="category" required>
+                {% for c in gallery_categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-row"><label>Image URL</label><input type="text" name="image_url" placeholder="/static/images/gallery/example.jpg" required></div>
+          <div class="form-row"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+          <button type="submit" class="btn btn-primary btn-sm">Add Image</button>
+        </form>
+      </details>
+
+      <div class="admin-card-grid">
+        {% for item in gallery_items %}
+        <div class="admin-item-card">
+          <div class="admin-item-img" style="background-image:url('{{ item.image_url }}')"></div>
+          <div class="admin-item-body">
+            <span class="menu-tag">{{ item.category }}</span>
+            <h4>{{ item.title }}</h4>
+            <details class="admin-edit-form">
+              <summary>Edit</summary>
+              <form method="POST" action="{{ url_for('admin_edit_gallery_item', item_id=item.id) }}" class="app-form">
+                <div class="form-row"><label>Title</label><input type="text" name="title" value="{{ item.title }}" required></div>
+                <div class="form-row">
+                  <label>Category</label>
+                  <select name="category">
+                    {% for c in gallery_categories %}<option value="{{ c }}" {{ 'selected' if c == item.category }}>{{ c }}</option>{% endfor %}
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-outline btn-sm">Save Changes</button>
+              </form>
+            </details>
+            <form method="POST" action="{{ url_for('admin_delete_gallery_item', item_id=item.id) }}" class="inline-form" onsubmit="return confirm('Delete this image?');">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <p class="empty-state">No gallery images yet — add your first one above.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="admin-panel" id="testimonials">
+      <h2>Testimonials</h2>
+
+      <details class="admin-add-form">
+        <summary>+ Add Testimonial</summary>
+        <form method="POST" action="{{ url_for('admin_add_testimonial') }}" class="app-form admin-inline-form">
+          <div class="form-grid-2">
+            <div class="form-row"><label>Customer Name</label><input type="text" name="customer_name" required></div>
+            <div class="form-row"><label>Event Type</label><input type="text" name="event_type"></div>
+          </div>
+          <div class="form-row"><label>Review</label><textarea name="review" rows="2" required></textarea></div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Rating</label>
+              <select name="rating">
+                <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+              </select>
+            </div>
+            <div class="form-row"><label>Photo URL (optional)</label><input type="text" name="image_url"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">Add Testimonial</button>
+        </form>
+      </details>
+
+      <div class="admin-card-grid">
+        {% for t in testimonials %}
+        <div class="admin-item-card">
+          <div class="admin-item-body">
+            <span class="stars">{% for i in range(t.rating) %}★{% endfor %}{% for i in range(5 - t.rating) %}☆{% endfor %}</span>
+            <h4>{{ t.customer_name }}</h4>
+            <p class="fine-print">{{ t.event_type }}</p>
+            <p>{{ t.review }}</p>
+            <form method="POST" action="{{ url_for('admin_delete_testimonial', item_id=t.id) }}" class="inline-form" onsubmit="return confirm('Delete this testimonial?');">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <p class="empty-state">No testimonials yet — add your first one above.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

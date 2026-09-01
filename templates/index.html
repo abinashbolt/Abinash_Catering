@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block title %}Abinash Catering — Delicious Food, Memorable Celebrations{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+<div class="hero-media">
+  <video
+    class="hero-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    poster="{{ url_for('static', filename='images/hero/hero-main.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/hero-bg.mp4') }}" type="video/mp4">
+  </video>
+</div>  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <span class="eyebrow">South Indian &amp; Multi-Cuisine Catering</span>
+    <h1>Delicious Food.<br>Memorable Celebrations.</h1>
+    <p class="hero-desc">Abinash Catering brings authentic flavours, carefully prepared food and professional service to every celebration.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('menu') }}" class="btn btn-primary">Explore Our Menu</a>
+      <a href="{{ url_for('booking') }}" class="btn btn-outline-light">Book Our Catering</a>
+    </div>
+    <ul class="trust-badges">
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Freshly Prepared</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Experienced Team</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Customized Menus</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Professional Service</li>
+    </ul>
+  </div>
+</section>
+
+<div class="scallop-divider scallop-flip" aria-hidden="true">
+  <svg viewBox="0 0 1200 24" preserveAspectRatio="none"><path d="M0 0 Q 15 24 30 0 Q 45 24 60 0 Q 75 24 90 0 Q 105 24 120 0 Q 135 24 150 0 Q 165 24 180 0 Q 195 24 210 0 Q 225 24 240 0 Q 255 24 270 0 Q 285 24 300 0 Q 315 24 330 0 Q 345 24 360 0 Q 375 24 390 0 Q 405 24 420 0 Q 435 24 450 0 Q 465 24 480 0 Q 495 24 510 0 Q 525 24 540 0 Q 555 24 570 0 Q 585 24 600 0 Q 615 24 630 0 Q 645 24 660 0 Q 675 24 690 0 Q 705 24 720 0 Q 735 24 750 0 Q 765 24 780 0 Q 795 24 810 0 Q 825 24 840 0 Q 855 24 870 0 Q 885 24 900 0 Q 915 24 930 0 Q 945 24 960 0 Q 975 24 990 0 Q 1005 24 1020 0 Q 1035 24 1050 0 Q 1065 24 1080 0 Q 1095 24 1110 0 Q 1125 24 1140 0 Q 1155 24 1170 0 Q 1185 24 1200 0 V24 H0 Z"/></svg>
+</div>
+
+<section class="section services-preview reveal">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">What We Cater</span>
+      <h2>Services For Every Celebration</h2>
+    </div>
+    <div class="services-grid-full">
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/wedding.png') }}')"></div>
+        <div class="service-body">
+          <h3>Wedding Catering</h3>
+          <p>Traditional and modern menus for weddings and receptions, from the muhurtham breakfast to the grand dinner spread.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/reception.png') }}')"></div>
+        <div class="service-body">
+          <h3>Reception Catering</h3>
+          <p>Professional food arrangements and live counters designed to make your reception effortless and memorable.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/birthday.png') }}')"></div>
+        <div class="service-body">
+          <h3>Birthday &amp; Family Functions</h3>
+          <p>Custom catering for birthdays and family celebrations, with menus that suit every age at the table.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/corporate.png') }}')"></div>
+        <div class="service-body">
+          <h3>Corporate Catering</h3>
+          <p>Professional catering for meetings, conferences and office celebrations, delivered on time, every time.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/engagement.png') }}')"></div>
+        <div class="service-body">
+          <h3>Engagement Catering</h3>
+          <p>Customized menus for engagement and betrothal ceremonies that set the tone for the celebrations ahead.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="service-card-full">
+        <div class="service-img" style="background-image:url('{{ url_for('static', filename='images/house.png') }}')"></div>
+        <div class="service-body">
+          <h3>House Functions</h3>
+          <p>Warm, home-style food services for poojas, festivals and everyday family gatherings.</p>
+          <a href="{{ url_for('services') }}" class="text-link">Learn More →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section menu-teaser reveal">
+  <div class="container">
+    <div class="catering-wizard">
+      <h2 class="wizard-heading">What are you catering for?</h2>
+      <p class="wizard-sub">Pick a meal to see the complete catering combinations available for it.</p>
+      <div class="meal-type-grid">
+        {% for m in meal_types %}
+        <a href="{{ url_for('menu') }}" class="meal-type-card">
+          <span class="meal-type-name">{{ m }}</span>
+          <span class="meal-type-cta">View Menus &rarr;</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section addl-services reveal">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Beyond The Menu</span>
+      <h2>Additional Services</h2>
+    </div>
+    <div class="addl-services-grid">
+
+      <div class="addl-service-card">
+        <div class="addl-service-media">
+          <img src="{{ url_for('static', filename='images/DJ.png') }}" alt="DJ setup">
+        </div>
+        <h3>DJ</h3>
+      </div>
+
+      <div class="addl-service-card">
+        <div class="addl-service-media">
+          <img src="{{ url_for('static', filename='images/decoration.png') }}" alt="Decorations">
+        </div>
+        <h3>Decorations</h3>
+      </div>
+
+      <div class="addl-service-card">
+        <div class="addl-service-media">
+          <img src="{{ url_for('static', filename='images/gift.png') }}" alt="Return gifts">
+        </div>
+        <h3>Return Gifts</h3>
+      </div>
+
+      <div class="addl-service-card">
+        <div class="addl-service-media">
+          <img src="{{ url_for('static', filename='images/dance.png') }}" alt="Welcome dance performance">
+        </div>
+        <h3>Welcome Dance</h3>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section about-preview reveal">
+  <div class="container about-grid">
+    <div class="about-image">
+      <img src="{{ url_for('static', filename='images/package.png') }}" alt="Complete Wedding Package - starting at ₹3.5L" loading="lazy">
+      <div class="image-frame" aria-hidden="true"></div>
+    </div>
+    <div class="about-copy">
+      <span class="eyebrow">Limited Offer</span>
+      <h2>Complete Wedding Package</h2>
+      <p>Starting at <strong>₹3.5L*</strong> — an all-inclusive package covering food & catering, decoration, DJ & music, and return gifts, so you can enjoy every moment while we take care of everything.</p>
+      <p>We record your requirements and customize each element to your preferences and budget, planning your wedding exactly the way you imagined it.</p>
+      <a href="{{ url_for('booking') }}" class="text-link">Tell Us Your Requirements →</a>
+      <p class="fine-print">*Indicative price — final quote depends on guest count and requirements.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section about-preview reveal">
+  <div class="container about-grid">
+    <div class="about-image">
+      <img src="{{ url_for('static', filename='images/red_card.png') }}" alt="Abinash Catering chefs preparing a traditional South Indian meal" loading="lazy">
+      <div class="image-frame" aria-hidden="true"></div>
+    </div>
+    <div class="about-copy">
+      <span class="eyebrow">Our Story</span>
+      <h2>We Make Every Occasion Taste Special</h2>
+      <p>For every wedding, reception and family gathering, Abinash Catering blends quality ingredients with traditional recipes passed down through generations. Our experienced chefs prepare each dish in hygienic kitchens, balancing authentic taste with modern presentation.</p>
+      <p>From an intimate house function to a grand wedding reception, our team works closely with you to build a customized menu and deliver dependable, professional service from planning to the final course.</p>
+      <a href="{{ url_for('about') }}" class="text-link">Know More About Us →</a>
+
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-num">10+</span><span class="stat-label">Years Experience*</span></div>
+        <div class="stat-card"><span class="stat-num">1000+</span><span class="stat-label">Events Served*</span></div>
+        <div class="stat-card"><span class="stat-num">50+</span><span class="stat-label">Menu Options*</span></div>
+        <div class="stat-card"><span class="stat-num">100%</span><span class="stat-label">Customer Focus*</span></div>
+      </div>
+      <p class="fine-print">*Placeholder figures — update with actual business statistics.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section gallery-preview reveal">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Moments We've Served</span>
+      <h2>Our Gallery</h2>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+      {% for item in gallery_items %}
+      <button type="button" class="gallery-item" data-category="{{ item.category }}"
+              data-full="{{ item.image_url }}" data-title="{{ item.title }}" data-desc="{{ item.description }}">
+        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
+        <span class="gallery-overlay">
+          <span class="gallery-title">{{ item.title }}</span>
+          <span class="gallery-cat">{{ item.category }}</span>
+        </span>
+      </button>
+      {% else %}
+      <p class="empty-state">Gallery photos will be added soon.</p>
+      {% endfor %}
+    </div>
+    <p class="empty-state" id="galleryEmptyState" hidden>No photos found in this category yet.</p>
+
+    <div class="center-cta">
+      <a href="{{ url_for('gallery') }}" class="btn btn-outline">View Full Gallery</a>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+  <div class="lightbox-content">
+    <img id="lightboxImage" src="" alt="">
+    <div class="lightbox-caption">
+      <p id="lightboxTitle"></p>
+      <p id="lightboxDesc" class="lightbox-desc"></p>
+    </div>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+</div>
+
+
+
+<section class="cta-banner reveal">
+  <div class="container cta-banner-inner">
+    <h2>Planning a celebration?</h2>
+    <p>Let Abinash Catering take care of the food, so you can take care of your guests.</p>
+    <a href="{{ url_for('booking') }}" class="btn btn-primary">Request a Quote</a>
+  </div>
+</section>
+
+{% endblock %}
